@@ -99,6 +99,12 @@
       transition: background 0.2s !important;
     }
     .nav-cta:hover { background: var(--gold-lt) !important; }
+    #nav-toggle {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      color: var(--gold); font-size: 28px; line-height: 1;
+      padding: 4px 8px;
+    }
 
     /* ─── HERO ─── */
     #hero {
@@ -666,13 +672,52 @@
       .cta-inner { flex-direction: column; text-align: center; }
       .cta-right { text-align: center; }
       .hero-headline { font-size: 40px; }
-      .nav-links { display: none; }
+
+      /* Mobile nav menu */
+      #nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute; top: 68px; left: 0; right: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--navy);
+        border-bottom: 2px solid var(--gold);
+        padding: 8px 0;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 40px; font-size: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+      .nav-cta { text-align: center; margin: 8px 40px 4px; padding: 14px 22px; }
+
+      /* SB 440 section stacks to one column */
+      .sb440-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
     }
     @media (max-width: 600px) {
       .services-grid, .sectors-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
       .credentials { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
       #hero { padding: 100px 24px 60px; }
       .container, .nav-inner { padding: 0 24px; }
+      .hero-headline { font-size: 34px; }
+      .about-content { padding: 60px 24px !important; }
+      .services-header { flex-direction: column; align-items: flex-start !important; gap: 16px; }
+      .services-header p { text-align: left !important; max-width: 100% !important; }
+
+      /* SB 440 hero card — tighter padding, wrap the CTA */
+      .sb440-hero-card { padding: 20px 20px !important; }
+
+      /* SB 440 detail section — smaller side padding + headline */
+      #sb440-detail { padding: 56px 24px !important; }
+      .sb440-h2 { font-size: 30px !important; }
+      .sb440-alert { flex-wrap: wrap; gap: 8px !important; padding: 14px 20px !important; }
+
+      /* Stake stats: 2-up stays but with less gap; drop to comfortable size */
+      .stake-grid { gap: 2px !important; }
+    }
+    @media (max-width: 420px) {
+      .stake-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -682,13 +727,14 @@
   <nav id="nav">
     <div class="nav-inner">
       <a href="#hero" class="nav-logo"><span>BCI</span> MANAGEMENT GROUP</a>
-      <div class="nav-links">
-        <a href="#services">Services</a>
-        <a href="#about">About</a>
-        <a href="#sectors">Sectors</a>
-        <a href="#process">Our Process</a>
+      <button id="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="var l=document.getElementById('nav-links');var open=l.classList.toggle('open');this.setAttribute('aria-expanded',open);this.setAttribute('aria-label',open?'Close menu':'Open menu');this.innerHTML=open?'&times;':'&#9776;';">&#9776;</button>
+      <div class="nav-links" id="nav-links">
+        <a href="#services" onclick="document.getElementById('nav-links').classList.remove('open');document.getElementById('nav-toggle').innerHTML='&#9776;';">Services</a>
+        <a href="#about" onclick="document.getElementById('nav-links').classList.remove('open');document.getElementById('nav-toggle').innerHTML='&#9776;';">About</a>
+        <a href="#sectors" onclick="document.getElementById('nav-links').classList.remove('open');document.getElementById('nav-toggle').innerHTML='&#9776;';">Sectors</a>
+        <a href="#process" onclick="document.getElementById('nav-links').classList.remove('open');document.getElementById('nav-toggle').innerHTML='&#9776;';">Our Process</a>
         <a href="sb440.html" style="color:var(--gold)!important;">SB 440</a>
-        <a href="#contact" class="nav-cta">Contact Us</a>
+        <a href="#contact" class="nav-cta" onclick="document.getElementById('nav-links').classList.remove('open');document.getElementById('nav-toggle').innerHTML='&#9776;';">Contact Us</a>
       </div>
     </div>
   </nav>
@@ -711,7 +757,7 @@
           <a href="#services" class="btn-ghost">View Our Services →</a>
         </div>
         <div style="margin-top:36px;">
-          <a href="#sb440-detail" style="display:block;background:rgba(200,146,42,0.10);border:2px solid var(--gold);border-radius:10px;padding:26px 28px;max-width:560px;text-decoration:none;transition:background 0.2s, transform 0.2s;" onmouseover="this.style.background='rgba(200,146,42,0.18)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(200,146,42,0.10)';this.style.transform='translateY(0)'">
+          <a href="#sb440-detail" class="sb440-hero-card" style="display:block;background:rgba(200,146,42,0.10);border:2px solid var(--gold);border-radius:10px;padding:26px 28px;max-width:560px;text-decoration:none;transition:background 0.2s, transform 0.2s;" onmouseover="this.style.background='rgba(200,146,42,0.18)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(200,146,42,0.10)';this.style.transform='translateY(0)'">
             <div style="display:flex;align-items:flex-start;gap:18px;">
               <div style="background:var(--gold);border-radius:8px;width:48px;height:48px;min-width:48px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--navy);">⚠</div>
               <div>
@@ -759,24 +805,24 @@
   </div>
 
   <!-- SB 440 URGENT SECTION -->
-  <section id="sb440-detail" style="background:var(--navy);padding:80px 40px;border-top:4px solid var(--gold);"">
+  <section id="sb440-detail" style="background:var(--navy);padding:80px 40px;border-top:4px solid var(--gold);">
     <div style="max-width:1200px;margin:0 auto;">
 
       <!-- Top alert bar — clickable scroll button -->
-      <a href="#sb440-detail" style="display:inline-flex;align-items:center;gap:16px;background:var(--gold);padding:14px 28px;margin-bottom:40px;text-decoration:none;transition:background 0.2s;cursor:pointer;" onmouseover="this.style.background='#E8B84B'" onmouseout="this.style.background='#C8922A'">
+      <a href="#sb440-detail" class="sb440-alert" style="display:inline-flex;align-items:center;gap:16px;background:var(--gold);padding:14px 28px;margin-bottom:40px;text-decoration:none;transition:background 0.2s;cursor:pointer;" onmouseover="this.style.background='#E8B84B'" onmouseout="this.style.background='#C8922A'">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--navy);">⚠ URGENT — Effective January 1, 2026 · California Private Construction</span>
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--navy);">↓ Learn More</span>
       </a>
 
       <!-- Headline -->
-      <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:80px;align-items:start;">
+      <div class="sb440-grid" style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:80px;align-items:start;">
         <div>
-          <h2 style="font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:24px;">California's SB 440 Has Changed the Rules.<br><span style="color:var(--gold);">Are You Protected?</span></h2>
+          <h2 class="sb440-h2" style="font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:24px;">California's SB 440 Has Changed the Rules.<br><span style="color:var(--gold);">Are You Protected?</span></h2>
           <p style="font-size:16px;color:var(--mid);line-height:1.8;font-weight:400;margin-bottom:28px;">For the first time in California history, private construction owners face the same strict legal claims process that public agencies have dealt with for years — with penalties that can be swift, severe, and financially devastating.</p>
           <p style="font-size:16px;color:var(--mid);line-height:1.8;font-weight:400;margin-bottom:40px;">Contractors — especially large, well-organized GCs — already know this law inside and out. They have legal teams, claim specialists, and scheduling experts ready to file the moment a dispute arises. <strong style="color:#fff;">Most private owners do not.</strong> That imbalance is exactly what SB 440 was designed to exploit — and it puts unprepared developers at serious financial risk.</p>
 
           <!-- What's at stake grid -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.05);margin-bottom:36px;">
+          <div class="stake-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.05);margin-bottom:36px;">
             <div style="background:rgba(255,255,255,0.03);padding:24px 20px;">
               <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:var(--gold);line-height:1;">24%</div>
               <div style="font-size:13px;color:var(--mid);margin-top:8px;line-height:1.5;">Annual interest penalty on unpaid undisputed amounts — that's 2% every single month</div>
